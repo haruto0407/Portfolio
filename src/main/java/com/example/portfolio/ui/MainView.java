@@ -80,26 +80,15 @@ public class MainView extends VerticalLayout {
     }
 
     private void refreshBoard() {
-        // 1. 全データを取得
-        List<JobApplicationDto> allApplications = service.findAll();
-
-        // ★追加: 検索フィルタリング処理
         String filterText = searchField.getValue();
-        List<JobApplicationDto> filteredApplications;
 
-        if (filterText == null || filterText.isEmpty()) {
-            filteredApplications = allApplications;
-        } else {
-            // 大文字小文字を無視して企業名に含まれているかチェック
-            filteredApplications = allApplications.stream()
-                    .filter(job -> job.getCompanyName().toLowerCase().contains(filterText.toLowerCase()))
-                    .collect(Collectors.toList());
-        }
+        // ★修正: UIでfilterせず、Serviceに検索させる
+        // これにより、DB側で絞り込まれた軽いデータだけが返ってくる
+        List<JobApplicationDto> filteredApplications = service.findByCompanyName(filterText);
 
-        // 2. 統計コンポーネントを更新 (フィルタ後のデータで計算)
+        // 統計などの更新
         statsBoard.update(filteredApplications);
 
-        // 3. カンバン列を再構築 (フィルタ後のデータを渡す)
         kanbanLayout.removeAll();
         for (SelectionStatus status : SelectionStatus.values()) {
             KanbanColumn column = new KanbanColumn(
@@ -107,9 +96,7 @@ public class MainView extends VerticalLayout {
                     this::openJobDialog,
                     this::handleDrop
             );
-            // ここで渡すリストは部品側でさらにステータスごとにフィルタされる
             column.setJobs(filteredApplications);
-
             kanbanLayout.add(column);
         }
     }

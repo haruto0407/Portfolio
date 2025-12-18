@@ -31,9 +31,9 @@ public class DashboardStats extends HorizontalLayout {
                         j.getStatus() == SelectionStatus.FINAL_INTERVIEW).count();
         long offers = jobs.stream().filter(j -> j.getStatus() == SelectionStatus.OFFER).count();
 
-        add(createCard("Total Applications", String.valueOf(total), VaadinIcon.ARCHIVE));
-        add(createCard("Active Interviews", String.valueOf(active), VaadinIcon.USER));
-        add(createCard("Offers", String.valueOf(offers), VaadinIcon.TROPHY));
+        add(createCard("全企業数", String.valueOf(total), VaadinIcon.ARCHIVE));
+        add(createCard("選考中企業", String.valueOf(active), VaadinIcon.USER));
+        add(createCard("内定済企業", String.valueOf(offers), VaadinIcon.TROPHY));
     }
 
     private Component createCard(String label, String value, VaadinIcon icon) {

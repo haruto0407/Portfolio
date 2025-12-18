@@ -29,21 +29,27 @@ public class JobApplicationService {
                 .collect(Collectors.toList());
     }
 
+    public List<JobApplicationDto> findByCompanyName(String filterText) {
+        if (filterText == null || filterText.isEmpty()) {
+            return findAll();
+        }
+        return repository.findByCompanyNameContainingIgnoreCase(filterText).stream()
+                .map(mapper::toDto)
+                .collect(Collectors.toList());
+    }
+
     // 引数を DTO に変更
     public void save(JobApplicationDto dto) {
         JobApplication entity;
         if (dto.getId() != null) {
-            // 更新: IDで検索して書き換え
             entity = repository.findById(dto.getId()).orElse(new JobApplication());
             mapper.updateEntity(dto, entity);
         } else {
-            // 新規: DTOからEntityを作成
             entity = mapper.toEntity(dto);
         }
         repository.save(entity);
     }
 
-    // 引数を DTO に変更
     public void delete(JobApplicationDto dto) {
         if (dto.getId() != null) {
             repository.deleteById(dto.getId());
